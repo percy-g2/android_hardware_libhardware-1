@@ -438,6 +438,20 @@ typedef struct hwc_module {
     struct hw_module_t common;
 } hwc_module_t;
 
+#ifdef STE_HARDWARE
+/*
+ * names for setParameter()
+ */
+enum {
+    /* Specifies the UI orientation */
+    HWC_UI_ORIENTATION = 0x00000000,
+    /* Specifies if hardware rotation is used */
+    HWC_HARDWARE_ROTATION = 0x00000001,
+    /* Set the hdmi plug status */
+    HWC_HDMI_PLUGGED = 0x00000002,
+};
+#endif
+
 typedef struct hwc_composer_device_1 {
     struct hw_device_t common;
 
@@ -625,6 +639,18 @@ typedef struct hwc_composer_device_1 {
      * Reserved for future use. Must be NULL.
      */
     void* reserved_proc[4];
+
+#ifdef STE_HARDWARE
+    /*
+     * This hook is vendor specific and optional.
+     *
+     * (*setParameter)() makes the hardware composer aware of the system state,
+     * e.g. hdmi plug status and ui rotation, so that it can make intelligent
+     * decisions on how to handle composed surfaces and cloning in the kernel.
+     */
+    int (*setParameter)(struct hwc_composer_device_1* dev,
+                int param, int value);
+#endif
 
 } hwc_composer_device_1_t;
 
